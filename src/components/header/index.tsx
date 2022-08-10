@@ -1,5 +1,6 @@
+import { signIn, signOut, useSession } from 'next-auth/react'
 import Image from 'next/image'
-import { ArrowCircleDown, ArrowCircleUp, X } from 'phosphor-react'
+import { ArrowCircleDown, ArrowCircleUp, User, X } from 'phosphor-react'
 
 import * as Dialog from '@radix-ui/react-dialog'
 
@@ -11,54 +12,73 @@ import {
   HeaderContent,
   ModalContent,
   ModalOverlay,
+  NavBar,
   TransactionType,
   TransactionTypeButton,
 } from './styles'
 
 export const Header = () => {
+  const { data: session } = useSession()
+
   return (
     <HeaderContainer>
       <HeaderContent>
         <Image src="/logo.svg" alt="" width={173} height={42} />
 
-        <Dialog.Root>
-          <Dialog.Trigger asChild>
-            <Button size="sm">Nova transação</Button>
-          </Dialog.Trigger>
+        {!session && (
+          <Button size="sm" onClick={() => signIn()}>
+            <User />
+            <span>Sign In</span>
+          </Button>
+        )}
 
-          <Dialog.Portal>
-            <ModalOverlay />
+        {session && (
+          <NavBar>
+            <Dialog.Root>
+              <Dialog.Trigger asChild>
+                <Button size="sm">Nova transação</Button>
+              </Dialog.Trigger>
 
-            <ModalContent>
-              <Dialog.Title>Nova transação</Dialog.Title>
+              <Dialog.Portal>
+                <ModalOverlay />
 
-              <CloseButton>
-                <X size={24} />
-              </CloseButton>
+                <ModalContent>
+                  <Dialog.Title>Nova transação</Dialog.Title>
 
-              <form>
-                <Input type="text" placeholder="Descrição" />
-                <Input type="number" placeholder="Preço" />
-                <Input type="text" placeholder="Categoria" />
+                  <CloseButton>
+                    <X size={24} />
+                  </CloseButton>
 
-                <TransactionType>
-                  <TransactionTypeButton value="input" variant="input">
-                    <ArrowCircleUp size={32} />
-                    <span>Entrada</span>
-                  </TransactionTypeButton>
-                  <TransactionTypeButton value="output" variant="output">
-                    <ArrowCircleDown size={32} />
-                    <span>Saída</span>
-                  </TransactionTypeButton>
-                </TransactionType>
+                  <form>
+                    <Input type="text" placeholder="Descrição" />
+                    <Input type="number" placeholder="Preço" />
+                    <Input type="text" placeholder="Categoria" />
 
-                <Button type="submit" size="lg" fullWidth>
-                  Cadastrar
-                </Button>
-              </form>
-            </ModalContent>
-          </Dialog.Portal>
-        </Dialog.Root>
+                    <TransactionType>
+                      <TransactionTypeButton value="input" variant="input">
+                        <ArrowCircleUp size={32} />
+                        <span>Entrada</span>
+                      </TransactionTypeButton>
+                      <TransactionTypeButton value="output" variant="output">
+                        <ArrowCircleDown size={32} />
+                        <span>Saída</span>
+                      </TransactionTypeButton>
+                    </TransactionType>
+
+                    <Button type="submit" size="lg" fullWidth>
+                      Cadastrar
+                    </Button>
+                  </form>
+                </ModalContent>
+              </Dialog.Portal>
+            </Dialog.Root>
+
+            <Button size="sm" onClick={() => signOut()} outlined>
+              <User />
+              <span>Sign Out</span>
+            </Button>
+          </NavBar>
+        )}
       </HeaderContent>
     </HeaderContainer>
   )

@@ -120,3 +120,8 @@ export const TransactionTypeButton = styled(
     }
   `}
 `
+
+export const NavBar = styled.nav`
+  display: flex;
+  gap: 1rem;
+`
