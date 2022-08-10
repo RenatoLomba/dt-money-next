@@ -12,12 +12,18 @@
   "dependencies": {
     "@radix-ui/react-dialog": "^1.0.0",
     "@radix-ui/react-radio-group": "^1.0.0",
+    "@trpc/client": "^9.27.0",
+    "@trpc/next": "^9.27.0",
+    "@trpc/react": "^9.27.0",
+    "@trpc/server": "^9.27.0",
     "next": "12.2.4",
     "next-auth": "^4.10.3",
     "phosphor-react": "^1.4.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "styled-components": "^5.3.5"
+    "react-query": "3",
+    "styled-components": "^5.3.5",
+    "zod": "^3.18.0"
   },
   "devDependencies": {
     "@rocketseat/eslint-config": "^1.1.3",

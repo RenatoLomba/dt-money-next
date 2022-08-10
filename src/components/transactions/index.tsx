@@ -1,11 +1,16 @@
 import { MagnifyingGlass } from 'phosphor-react'
 import { FC } from 'react'
 
+import { trpc } from '../../utils/trpc'
 import { Button } from '../button'
 import { Input } from '../input'
 import { SearchForm, TransactionsContainer, TransactionsTable } from './styles'
 
 export const Transactions: FC = () => {
+  const hello = trpc.useQuery(['hello', { text: 'client' }])
+
+  console.log(hello?.data)
+
   return (
     <TransactionsContainer>
       <SearchForm>
