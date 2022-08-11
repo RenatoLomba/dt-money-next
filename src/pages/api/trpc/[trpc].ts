@@ -33,10 +33,20 @@ export const appRouter = createRouter()
       .query('get-user-transactions', {
         async resolve({ ctx }) {
           const transactions = await prismaClient.transaction.findMany({
+            select: {
+              id: true,
+              category: true,
+              createdAt: true,
+              description: true,
+              type: true,
+              value: true,
+            },
             where: {
               user: ctx.user?.email!,
             },
           })
+
+          await prismaClient.$disconnect()
 
           return { transactions }
         },
@@ -44,7 +54,7 @@ export const appRouter = createRouter()
       .mutation('create-transaction', {
         input: createTransactionSchema,
         async resolve({ input, ctx }) {
-          const transaction = await prismaClient.transaction.create({
+          await prismaClient.transaction.create({
             data: {
               category: input.category,
               description: input.description,
@@ -54,7 +64,7 @@ export const appRouter = createRouter()
             },
           })
 
-          return { transaction }
+          await prismaClient.$disconnect()
         },
       }),
   )
