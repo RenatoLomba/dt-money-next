@@ -1,3 +1,6 @@
+import classNames from 'classnames'
+import { format } from 'date-fns'
+import ptBR from 'date-fns/locale/pt-BR'
 import { MagnifyingGlass } from 'phosphor-react'
 import { FC } from 'react'
 
@@ -23,22 +26,34 @@ export const Transactions: FC = () => {
         </Button>
       </SearchForm>
 
-      <TransactionsTable>
-        <tbody>
-          <tr>
-            <td width="50%">Desenvolvimento de site</td>
-            <td className="input">R$ 12.000,00</td>
-            <td>Venda</td>
-            <td>13/04/2022</td>
-          </tr>
-          <tr>
-            <td width="50%">Aluguel do apartamento</td>
-            <td className="output">R$ 1.200,00</td>
-            <td>Casa</td>
-            <td>15/03/2022</td>
-          </tr>
-        </tbody>
-      </TransactionsTable>
+      {data?.transactions && (
+        <TransactionsTable>
+          <tbody>
+            {data.transactions.map((transaction) => (
+              <tr key={transaction.id}>
+                <td width="40%">{transaction.description}</td>
+                <td
+                  className={classNames({
+                    input: transaction.type === 'INPUT',
+                    output: transaction.type === 'OUTPUT',
+                  })}
+                >
+                  {new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                  }).format(transaction.value)}
+                </td>
+                <td>{transaction.category}</td>
+                <td>
+                  {format(transaction.createdAt, 'dd/MM/yyyy', {
+                    locale: ptBR,
+                  })}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </TransactionsTable>
+      )}
     </TransactionsContainer>
   )
 }

@@ -1,12 +1,13 @@
 import { SessionProvider } from 'next-auth/react'
 import type { AppProps } from 'next/app'
 import { ThemeProvider } from 'styled-components'
+import superjson from 'superjson'
 
 import { withTRPC } from '@trpc/next'
 
+import { AppRouter } from '../server/router'
 import { GlobalStyle } from '../styles/global'
 import { defaultTheme } from '../styles/themes/default'
-import { AppRouter } from './api/trpc/[trpc]'
 
 const MyApp = ({
   Component,
@@ -43,6 +44,7 @@ export default withTRPC<AppRouter>({
   config() {
     return {
       url: `${getBaseUrl()}/api/trpc`,
+      transformer: superjson,
     }
   },
   ssr: false,
