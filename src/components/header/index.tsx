@@ -22,7 +22,9 @@ import {
 export const Header = () => {
   const { data: session } = useSession()
 
-  const { mutate: createTransaction } = trpc.useMutation('create-transaction')
+  const { mutate: createTransaction } = trpc.useMutation(
+    'auth.create-transaction',
+  )
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault()
