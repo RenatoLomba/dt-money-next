@@ -1,9 +1,11 @@
 import { signIn, signOut, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import { ArrowCircleDown, ArrowCircleUp, User, X } from 'phosphor-react'
+import { FormEvent } from 'react'
 
 import * as Dialog from '@radix-ui/react-dialog'
 
+import { trpc } from '../../utils/trpc'
 import { Button } from '../button'
 import { Input } from '../input'
 import {
@@ -19,6 +21,19 @@ import {
 
 export const Header = () => {
   const { data: session } = useSession()
+
+  const { mutate: createTransaction } = trpc.useMutation('create-transaction')
+
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault()
+
+    createTransaction({
+      category: 'Casa',
+      description: 'Aluguel',
+      type: 'output',
+      value: 800.99,
+    })
+  }
 
   return (
     <HeaderContainer>
@@ -49,7 +64,7 @@ export const Header = () => {
                     <X size={24} />
                   </CloseButton>
 
-                  <form>
+                  <form onSubmit={handleSubmit}>
                     <Input type="text" placeholder="Descrição" />
                     <Input type="number" placeholder="Preço" />
                     <Input type="text" placeholder="Categoria" />
