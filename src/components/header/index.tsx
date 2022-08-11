@@ -26,6 +26,7 @@ import {
 } from './styles'
 
 export const Header = () => {
+  const queryClient = trpc.useContext()
   const {
     register,
     formState: { errors },
@@ -36,8 +37,13 @@ export const Header = () => {
   })
   const { data: session } = useSession()
 
-  const { mutate: createTransaction } = trpc.useMutation(
+  const { mutate: createTransaction, isLoading } = trpc.useMutation(
     'auth.create-transaction',
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('auth.get-user-transactions')
+      },
+    },
   )
 
   function onCreateTransactionFormSubmit(data: CreateTransactionInput) {
@@ -132,7 +138,7 @@ export const Header = () => {
                               onValueChange={onChange}
                             >
                               <TransactionTypeButton
-                                value="input"
+                                value="INPUT"
                                 variant="input"
                               >
                                 <ArrowCircleUp size={32} />
@@ -140,7 +146,7 @@ export const Header = () => {
                               </TransactionTypeButton>
 
                               <TransactionTypeButton
-                                value="output"
+                                value="OUTPUT"
                                 variant="output"
                               >
                                 <ArrowCircleDown size={32} />
@@ -165,7 +171,12 @@ export const Header = () => {
                         })()}
                     </div>
 
-                    <Button type="submit" size="lg" fullWidth>
+                    <Button
+                      disabled={isLoading}
+                      type="submit"
+                      size="lg"
+                      fullWidth
+                    >
                       Cadastrar
                     </Button>
                   </form>

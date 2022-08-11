@@ -4,6 +4,7 @@ import { TRPCError } from '@trpc/server'
 import * as trpcNext from '@trpc/server/adapters/next'
 
 import { createContext, createRouter } from '../../../server/context'
+import { prismaClient } from '../../../server/prisma'
 import { createTransactionSchema } from '../../../utils/validations/create-transaction-schema'
 
 export const appRouter = createRouter()
@@ -29,12 +30,31 @@ export const appRouter = createRouter()
 
         return next()
       })
+      .query('get-user-transactions', {
+        async resolve({ ctx }) {
+          const transactions = await prismaClient.transaction.findMany({
+            where: {
+              user: ctx.user?.email!,
+            },
+          })
+
+          return { transactions }
+        },
+      })
       .mutation('create-transaction', {
         input: createTransactionSchema,
-        async resolve({ input }) {
-          console.log(input)
+        async resolve({ input, ctx }) {
+          const transaction = await prismaClient.transaction.create({
+            data: {
+              category: input.category,
+              description: input.description,
+              type: input.type,
+              value: input.value,
+              user: ctx.user?.email!,
+            },
+          })
 
-          return input
+          return { transaction }
         },
       }),
   )

@@ -35,6 +35,10 @@ export const Button = styled.button<ButtonProps>`
       box-shadow: 0 0 0 2px ${theme.colors['green-300']};
     }
 
+    &:disabled {
+      opacity: 0.5;
+    }
+
     &:hover {
       background: ${outlined
         ? theme.colors['green-500']
