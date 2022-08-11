@@ -46,6 +46,10 @@ export const ModalContent = styled(Dialog.Content)`
     button[type='submit'] {
       margin-top: 1.5rem;
     }
+
+    .error-message {
+      color: ${(props) => props.theme.colors['red-300']};
+    }
   }
 `
 

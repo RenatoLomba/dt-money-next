@@ -7,7 +7,9 @@ import { Input } from '../input'
 import { SearchForm, TransactionsContainer, TransactionsTable } from './styles'
 
 export const Transactions: FC = () => {
-  const hello = trpc.useQuery(['hello', { text: 'client' }])
+  const hello = trpc.useQuery(['hello', { text: 'client' }], {
+    staleTime: 1000 * 60,
+  })
 
   console.log(hello?.data)
 

@@ -43,7 +43,6 @@ export default withTRPC<AppRouter>({
   config() {
     return {
       url: `${getBaseUrl()}/api/trpc`,
-      // queryClientConfig: { defaultOptions: { queries: { staleTime: 60 } } },
     }
   },
   ssr: false,
