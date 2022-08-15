@@ -1,20 +1,39 @@
 import classNames from 'classnames'
 import { format } from 'date-fns'
 import ptBR from 'date-fns/locale/pt-BR'
-import { MagnifyingGlass } from 'phosphor-react'
+import { MagnifyingGlass, Trash } from 'phosphor-react'
 import { FC } from 'react'
 
 import { trpc } from '../../utils/trpc'
 import { Button } from '../button'
 import { Input } from '../input'
-import { SearchForm, TransactionsContainer, TransactionsTable } from './styles'
+import {
+  DeleteTransactionButton,
+  SearchForm,
+  TransactionsContainer,
+  TransactionsTable,
+} from './styles'
 
 export const Transactions: FC = () => {
+  const queryClient = trpc.useContext()
+
   const { data } = trpc.useQuery(['auth.get-user-transactions'], {
     staleTime: Infinity,
   })
 
-  console.log(data?.transactions)
+  const {
+    mutate: deleteTransaction,
+    isLoading,
+    variables,
+  } = trpc.useMutation(['auth.delete-transaction'], {
+    onSuccess: () => {
+      queryClient.invalidateQueries('auth.get-user-transactions')
+    },
+  })
+
+  const handleDeleteTransaction = (transactionId: string) => {
+    deleteTransaction({ transactionId })
+  }
 
   return (
     <TransactionsContainer>
@@ -48,6 +67,17 @@ export const Transactions: FC = () => {
                   {format(transaction.createdAt, 'dd/MM/yyyy', {
                     locale: ptBR,
                   })}
+                </td>
+                <td>
+                  <DeleteTransactionButton
+                    disabled={
+                      isLoading && variables?.transactionId === transaction.id
+                    }
+                    type="button"
+                    onClick={() => handleDeleteTransaction(transaction.id)}
+                  >
+                    <Trash size={20} />
+                  </DeleteTransactionButton>
                 </td>
               </tr>
             ))}

@@ -51,3 +51,30 @@ export const SearchForm = styled.form`
     padding-left: 2rem;
   }
 `
+
+export const DeleteTransactionButton = styled.button`
+  line-height: 0;
+  border: 1px solid ${(props) => props.theme.colors['red-300']};
+  background: transparent;
+  color: ${(props) => props.theme.colors['red-300']};
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:disabled {
+    border-color: ${(props) => props.theme.colors['gray-100']};
+    color: ${(props) => props.theme.colors['gray-100']};
+    cursor: not-allowed;
+  }
+
+  &:hover:not(:disabled) {
+    background: ${(props) => props.theme.colors['red-300']};
+    color: ${(props) => props.theme.colors.white};
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 2px ${(props) => props.theme.colors['red-300']};
+  }
+`

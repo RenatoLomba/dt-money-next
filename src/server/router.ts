@@ -66,6 +66,18 @@ export const appRouter = createRouter()
 
           await prismaClient.$disconnect()
         },
+      })
+      .mutation('delete-transaction', {
+        input: z.object({
+          transactionId: z.string().uuid(),
+        }),
+        async resolve({ input }) {
+          await prismaClient.transaction.delete({
+            where: {
+              id: input.transactionId,
+            },
+          })
+        },
       }),
   )
 
