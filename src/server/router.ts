@@ -77,6 +77,8 @@ export const appRouter = createRouter()
               id: input.transactionId,
             },
           })
+
+          await prismaClient.$disconnect()
         },
       }),
   )
