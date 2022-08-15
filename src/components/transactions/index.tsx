@@ -21,16 +21,16 @@ const transactionsPerPage = 5
 
 export const Transactions: FC = () => {
   const queryClient = trpc.useContext()
-  const { data } = trpc.useQuery(['auth.get-user-transactions'], {
+  const { data } = trpc.useQuery(['transactions.get-by-user'], {
     staleTime: Infinity,
   })
   const {
     mutate: deleteTransaction,
     isLoading,
     variables,
-  } = trpc.useMutation(['auth.delete-transaction'], {
+  } = trpc.useMutation(['transactions.delete'], {
     onSuccess: () => {
-      queryClient.invalidateQueries('auth.get-user-transactions')
+      queryClient.invalidateQueries('transactions.get-by-user')
     },
   })
 

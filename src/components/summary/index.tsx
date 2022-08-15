@@ -31,7 +31,7 @@ const SummaryCard: FC<SummaryCardProps> = ({ title, icon, value, filled }) => {
 }
 
 export const Summary: FC = () => {
-  const { data } = trpc.useQuery(['auth.get-user-transactions'], {
+  const { data } = trpc.useQuery(['transactions.get-by-user'], {
     staleTime: Infinity,
   })
 

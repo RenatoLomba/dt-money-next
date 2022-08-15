@@ -27,10 +27,10 @@ export const CreateTransactionForm: FC = () => {
   })
 
   const { mutate: createTransaction, isLoading } = trpc.useMutation(
-    'auth.create-transaction',
+    'transactions.create',
     {
       onSuccess: () => {
-        queryClient.invalidateQueries('auth.get-user-transactions')
+        queryClient.invalidateQueries('transactions.get-by-user')
         reset()
       },
     },
