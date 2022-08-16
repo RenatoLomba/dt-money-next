@@ -31,6 +31,7 @@ export const CreateTransactionForm: FC = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries('transactions.get-by-user')
+        queryClient.invalidateQueries('transactions.get-summary-data')
         reset()
       },
     },

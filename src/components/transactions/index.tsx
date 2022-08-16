@@ -31,6 +31,7 @@ export const Transactions: FC = () => {
   } = trpc.useMutation(['transactions.delete'], {
     onSuccess: () => {
       queryClient.invalidateQueries('transactions.get-by-user')
+      queryClient.invalidateQueries('transactions.get-summary-data')
     },
   })
 

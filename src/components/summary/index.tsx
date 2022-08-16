@@ -1,5 +1,5 @@
 import { ArrowCircleDown, ArrowCircleUp, CurrencyDollar } from 'phosphor-react'
-import { FC, ReactNode, useMemo } from 'react'
+import { FC, ReactNode } from 'react'
 
 import { trpc } from '../../utils/trpc'
 import { SummaryCardContainer, SummaryContainer } from './styles'
@@ -31,51 +31,26 @@ const SummaryCard: FC<SummaryCardProps> = ({ title, icon, value, filled }) => {
 }
 
 export const Summary: FC = () => {
-  const { data } = trpc.useQuery(['transactions.get-by-user'], {
-    staleTime: Infinity,
-  })
-
-  const transactionsValues = useMemo(() => {
-    if (!data) return null
-
-    return data.transactions.reduce(
-      (values, transaction) => {
-        if (transaction.type === 'INPUT') {
-          values.inputs += transaction.value
-        } else {
-          values.outputs += transaction.value
-        }
-
-        values.total = values.inputs - values.outputs
-
-        return values
-      },
-      {
-        inputs: 0,
-        outputs: 0,
-        total: 0,
-      },
-    )
-  }, [data])
+  const { data } = trpc.useQuery(['transactions.get-summary-data'])
 
   return (
     <SummaryContainer>
       <SummaryCard
         title="Entradas"
         icon={<ArrowCircleUp size={32} color="#00b37e" />}
-        value={transactionsValues?.inputs ?? 0}
+        value={data?.inputs ?? 0}
       />
 
       <SummaryCard
         title="Saídas"
         icon={<ArrowCircleDown size={32} color="#f75a68" />}
-        value={transactionsValues?.outputs ?? 0}
+        value={data?.outputs ?? 0}
       />
 
       <SummaryCard
         title="Total"
         icon={<CurrencyDollar size={32} />}
-        value={transactionsValues?.total ?? 0}
+        value={(data?.inputs ?? 0) - (data?.outputs ?? 0)}
         filled
       />
     </SummaryContainer>

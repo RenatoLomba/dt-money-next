@@ -14,6 +14,26 @@ export const transactionsRouter = createRouter()
 
     return next()
   })
+  .query('get-summary-data', {
+    async resolve({ ctx }) {
+      const summary = await prismaClient.transaction.groupBy({
+        by: ['type'],
+        _sum: {
+          value: true,
+        },
+        where: {
+          user: ctx.user?.email!,
+        },
+      })
+
+      await prismaClient.$disconnect()
+
+      return {
+        outputs: summary[0]._sum.value ?? 0,
+        inputs: summary[1]._sum.value ?? 0,
+      }
+    },
+  })
   .query('get-by-user', {
     async resolve({ ctx }) {
       const transactions = await prismaClient.transaction.findMany({
