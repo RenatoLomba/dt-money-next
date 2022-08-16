@@ -37,9 +37,13 @@ export const Button = styled.button<ButtonProps>`
 
     &:disabled {
       opacity: 0.5;
+      cursor: not-allowed;
+      background: ${(props) => props.theme.colors['gray-500']};
+      border-color: #fff;
+      color: #fff;
     }
 
-    &:hover {
+    &:hover:not(:disabled) {
       background: ${outlined
         ? theme.colors['green-500']
         : theme.colors['green-300']};

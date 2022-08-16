@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import { format } from 'date-fns'
 import ptBR from 'date-fns/locale/pt-BR'
 import { CaretLeft, CaretRight, MagnifyingGlass, Trash } from 'phosphor-react'
-import { FC, useState } from 'react'
+import { FC, FormEvent, useEffect, useState } from 'react'
 
 import { trpc } from '../../utils/trpc'
 import { Button } from '../button'
@@ -21,17 +21,30 @@ export const Transactions: FC = () => {
   const queryClient = trpc.useContext()
 
   const [activePage, setActivePage] = useState(1)
+  const [searchText, setSearchText] = useState('')
 
-  const { data } = trpc.useQuery(
-    ['transactions.get-by-user', { page: activePage }],
+  const { data, isLoading, isFetching, refetch, isStale } = trpc.useQuery(
+    [
+      'transactions.get-by-user',
+      { page: activePage, description: searchText || null },
+    ],
     {
       staleTime: Infinity,
+      enabled: false,
     },
   )
 
+  useEffect(() => {
+    if (searchText) return
+
+    if (isStale) {
+      refetch()
+    }
+  }, [refetch, activePage, isStale, searchText])
+
   const {
     mutate: deleteTransaction,
-    isLoading,
+    isLoading: isDeleting,
     variables,
   } = trpc.useMutation(['transactions.delete'], {
     onSuccess: () => {
@@ -49,17 +62,34 @@ export const Transactions: FC = () => {
     deleteTransaction({ transactionId })
   }
 
+  const cantSearchTransaction = isLoading || isFetching || !searchText.trim()
+
+  const searchTransaction = (e: FormEvent) => {
+    e.preventDefault()
+
+    if (cantSearchTransaction) return
+
+    refetch()
+  }
+
   return (
     <TransactionsContainer>
-      <SearchForm>
-        <Input type="text" placeholder="Busque por transações" />
-        <Button type="submit" outlined>
+      <SearchForm onSubmit={searchTransaction}>
+        <Input
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          type="text"
+          placeholder="Busque por transações"
+        />
+        <Button type="submit" outlined disabled={cantSearchTransaction}>
           <MagnifyingGlass size={20} />
           <span>Buscar</span>
         </Button>
       </SearchForm>
 
-      {data && data.transactions && data.pages && (
+      {(isLoading || isFetching) && <div>Is loading...</div>}
+
+      {data && data.transactions && (
         <>
           <TransactionsTable>
             <tbody>
@@ -86,7 +116,8 @@ export const Transactions: FC = () => {
                   <td>
                     <DeleteTransactionButton
                       disabled={
-                        isLoading && variables?.transactionId === transaction.id
+                        isDeleting &&
+                        variables?.transactionId === transaction.id
                       }
                       type="button"
                       onClick={() => handleDeleteTransaction(transaction.id)}

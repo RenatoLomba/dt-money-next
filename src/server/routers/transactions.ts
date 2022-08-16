@@ -1,5 +1,6 @@
 import { z } from 'zod'
 
+import { Prisma } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 
 import { createTransactionSchema } from '../../utils/validations/create-transaction-schema'
@@ -39,8 +40,19 @@ export const transactionsRouter = createRouter()
   .query('get-by-user', {
     input: z.object({
       page: z.number().nullable().default(1),
+      description: z.string().nullable(),
     }),
-    async resolve({ ctx, input: { page = 1 } }) {
+    async resolve({ ctx, input: { page = 1, description } }) {
+      const where: Prisma.TransactionWhereInput = {
+        user: ctx.user?.email!,
+      }
+
+      if (description) {
+        where.description = {
+          contains: description,
+        }
+      }
+
       const transactions = await prismaClient.transaction.findMany({
         select: {
           id: true,
@@ -50,18 +62,14 @@ export const transactionsRouter = createRouter()
           type: true,
           value: true,
         },
-        where: {
-          user: ctx.user?.email!,
-        },
+        where,
         orderBy: { createdAt: 'desc' },
         skip: (page! - 1) * transactionsPerPage,
         take: transactionsPerPage,
       })
 
       const count = await prismaClient.transaction.count({
-        where: {
-          user: ctx.user?.email!,
-        },
+        where,
       })
 
       await prismaClient.$disconnect()
@@ -72,7 +80,15 @@ export const transactionsRouter = createRouter()
   .mutation('create', {
     input: createTransactionSchema,
     async resolve({ input, ctx }) {
-      await prismaClient.transaction.create({
+      const transaction = await prismaClient.transaction.create({
+        select: {
+          id: true,
+          category: true,
+          createdAt: true,
+          description: true,
+          type: true,
+          value: true,
+        },
         data: {
           category: input.category,
           description: input.description,
@@ -83,6 +99,8 @@ export const transactionsRouter = createRouter()
       })
 
       await prismaClient.$disconnect()
+
+      return { transaction }
     },
   })
   .mutation('delete', {
