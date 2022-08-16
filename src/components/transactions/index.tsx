@@ -17,13 +17,18 @@ import {
   TransactionsTable,
 } from './styles'
 
-const transactionsPerPage = 5
-
 export const Transactions: FC = () => {
   const queryClient = trpc.useContext()
-  const { data } = trpc.useQuery(['transactions.get-by-user'], {
-    staleTime: Infinity,
-  })
+
+  const [activePage, setActivePage] = useState(1)
+
+  const { data } = trpc.useQuery(
+    ['transactions.get-by-user', { page: activePage }],
+    {
+      staleTime: Infinity,
+    },
+  )
+
   const {
     mutate: deleteTransaction,
     isLoading,
@@ -35,19 +40,10 @@ export const Transactions: FC = () => {
     },
   })
 
-  const [activePage, setActivePage] = useState(1)
-  const pagesCount = Math.ceil(
-    (data?.transactions.length ?? 0) / transactionsPerPage,
-  )
+  const pagesCount = data?.pages ?? 1
 
   const previousPage = activePage - 1
   const nextPage = activePage + 1
-
-  const transactions =
-    data?.transactions.slice(
-      transactionsPerPage * (activePage - 1),
-      transactionsPerPage * activePage,
-    ) ?? []
 
   const handleDeleteTransaction = (transactionId: string) => {
     deleteTransaction({ transactionId })
@@ -63,76 +59,78 @@ export const Transactions: FC = () => {
         </Button>
       </SearchForm>
 
-      {transactions.length > 0 && (
-        <TransactionsTable>
-          <tbody>
-            {transactions.map((transaction) => (
-              <tr key={transaction.id}>
-                <td width="40%">{transaction.description}</td>
-                <td
-                  className={classNames({
-                    input: transaction.type === 'INPUT',
-                    output: transaction.type === 'OUTPUT',
-                  })}
-                >
-                  {new Intl.NumberFormat('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL',
-                  }).format(transaction.value)}
-                </td>
-                <td>{transaction.category}</td>
-                <td>
-                  {format(transaction.createdAt, 'dd/MM/yyyy', {
-                    locale: ptBR,
-                  })}
-                </td>
-                <td>
-                  <DeleteTransactionButton
-                    disabled={
-                      isLoading && variables?.transactionId === transaction.id
-                    }
-                    type="button"
-                    onClick={() => handleDeleteTransaction(transaction.id)}
+      {data && data.transactions && data.pages && (
+        <>
+          <TransactionsTable>
+            <tbody>
+              {data.transactions.map((transaction) => (
+                <tr key={transaction.id}>
+                  <td width="40%">{transaction.description}</td>
+                  <td
+                    className={classNames({
+                      input: transaction.type === 'INPUT',
+                      output: transaction.type === 'OUTPUT',
+                    })}
                   >
-                    <Trash size={20} />
-                  </DeleteTransactionButton>
-                </td>
-              </tr>
+                    {new Intl.NumberFormat('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
+                    }).format(transaction.value)}
+                  </td>
+                  <td>{transaction.category}</td>
+                  <td>
+                    {format(transaction.createdAt, 'dd/MM/yyyy', {
+                      locale: ptBR,
+                    })}
+                  </td>
+                  <td>
+                    <DeleteTransactionButton
+                      disabled={
+                        isLoading && variables?.transactionId === transaction.id
+                      }
+                      type="button"
+                      onClick={() => handleDeleteTransaction(transaction.id)}
+                    >
+                      <Trash size={20} />
+                    </DeleteTransactionButton>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </TransactionsTable>
+
+          <PaginationContainer>
+            <PaginationStepButton
+              disabled={previousPage === 0}
+              type="button"
+              onClick={() => setActivePage(previousPage)}
+            >
+              <CaretLeft size={24} />
+            </PaginationStepButton>
+
+            {Array.from(Array(pagesCount).keys()).map((page) => (
+              <PaginationButton
+                key={page}
+                className={classNames({
+                  active: page + 1 === activePage,
+                })}
+                type="button"
+                onClick={() => setActivePage(page + 1)}
+              >
+                {page + 1}
+              </PaginationButton>
             ))}
-          </tbody>
-        </TransactionsTable>
+
+            <PaginationStepButton
+              disabled={nextPage > pagesCount}
+              type="button"
+              onClick={() => setActivePage(nextPage)}
+            >
+              <CaretRight size={24} />
+            </PaginationStepButton>
+          </PaginationContainer>
+        </>
       )}
-
-      <PaginationContainer>
-        <PaginationStepButton
-          disabled={previousPage === 0}
-          type="button"
-          onClick={() => setActivePage(previousPage)}
-        >
-          <CaretLeft size={24} />
-        </PaginationStepButton>
-
-        {Array.from(Array(pagesCount).keys()).map((page) => (
-          <PaginationButton
-            key={page}
-            className={classNames({
-              active: page + 1 === activePage,
-            })}
-            type="button"
-            onClick={() => setActivePage(page + 1)}
-          >
-            {page + 1}
-          </PaginationButton>
-        ))}
-
-        <PaginationStepButton
-          disabled={nextPage > pagesCount}
-          type="button"
-          onClick={() => setActivePage(nextPage)}
-        >
-          <CaretRight size={24} />
-        </PaginationStepButton>
-      </PaginationContainer>
     </TransactionsContainer>
   )
 }

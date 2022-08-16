@@ -6,6 +6,8 @@ import { createTransactionSchema } from '../../utils/validations/create-transact
 import { createRouter } from '../context'
 import { prismaClient } from '../prisma'
 
+const transactionsPerPage = 5
+
 export const transactionsRouter = createRouter()
   .middleware(async ({ ctx, next }) => {
     if (!ctx.user) {
@@ -35,7 +37,10 @@ export const transactionsRouter = createRouter()
     },
   })
   .query('get-by-user', {
-    async resolve({ ctx }) {
+    input: z.object({
+      page: z.number().nullable().default(1),
+    }),
+    async resolve({ ctx, input: { page = 1 } }) {
       const transactions = await prismaClient.transaction.findMany({
         select: {
           id: true,
@@ -49,11 +54,19 @@ export const transactionsRouter = createRouter()
           user: ctx.user?.email!,
         },
         orderBy: { createdAt: 'desc' },
+        skip: (page! - 1) * transactionsPerPage,
+        take: transactionsPerPage,
+      })
+
+      const count = await prismaClient.transaction.count({
+        where: {
+          user: ctx.user?.email!,
+        },
       })
 
       await prismaClient.$disconnect()
 
-      return { transactions }
+      return { transactions, pages: Math.ceil(count / transactionsPerPage) }
     },
   })
   .mutation('create', {

@@ -31,7 +31,9 @@ const SummaryCard: FC<SummaryCardProps> = ({ title, icon, value, filled }) => {
 }
 
 export const Summary: FC = () => {
-  const { data } = trpc.useQuery(['transactions.get-summary-data'])
+  const { data } = trpc.useQuery(['transactions.get-summary-data'], {
+    staleTime: Infinity,
+  })
 
   return (
     <SummaryContainer>
