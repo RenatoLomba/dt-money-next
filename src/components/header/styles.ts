@@ -37,9 +37,23 @@ export const ModalContent = styled(Dialog.Content)`
   padding: 2.5rem 3rem;
   background: ${(props) => props.theme.colors['gray-800']};
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+
+  @media screen and (min-width: 513px) {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  @media screen and (max-width: 512px) {
+    position: fixed;
+    padding: 1rem 1.5rem;
+    min-width: 100%;
+    min-height: 478px;
+    transform: none;
+
+    left: 0;
+    bottom: 0;
+  }
 
   form {
     margin-top: 2rem;
