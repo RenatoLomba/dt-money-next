@@ -95,9 +95,11 @@ export const Transactions: FC = () => {
             <tbody>
               {data.transactions.map((transaction) => (
                 <tr key={transaction.id}>
-                  <td width="40%">{transaction.description}</td>
+                  <td className="description" width="40%">
+                    {transaction.description}
+                  </td>
                   <td
-                    className={classNames({
+                    className={classNames('value', {
                       input: transaction.type === 'INPUT',
                       output: transaction.type === 'OUTPUT',
                     })}
@@ -107,8 +109,8 @@ export const Transactions: FC = () => {
                       currency: 'BRL',
                     }).format(transaction.value)}
                   </td>
-                  <td>{transaction.category}</td>
-                  <td>
+                  <td className="category">{transaction.category}</td>
+                  <td className="created-date">
                     {format(transaction.createdAt, 'dd/MM/yyyy', {
                       locale: ptBR,
                     })}

@@ -5,15 +5,19 @@ export const SummaryContainer = styled.section`
   max-width: 1120px;
   margin: 0 auto;
   padding: 0 1.5rem;
-
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
+  overflow: auto;
 
   margin-top: -5rem;
+
+  & > div {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
 `
 
 export const SummaryCardContainer = styled.div<{ filled?: boolean }>`
+  min-width: 280px;
   background: ${({ filled, theme }) =>
     filled ? theme.colors['green-700'] : theme.colors['gray-600']};
   border-radius: 6px;

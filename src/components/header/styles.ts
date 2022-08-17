@@ -16,6 +16,11 @@ export const HeaderContent = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
+
+  @media screen and (max-width: 768px) {
+    gap: 0.5rem;
+  }
 `
 
 export const ModalOverlay = styled(Dialog.Overlay)`
@@ -69,4 +74,22 @@ export const CloseButton = styled(Dialog.Close)`
 export const NavBar = styled.nav`
   display: flex;
   gap: 1rem;
+
+  button {
+    white-space: nowrap;
+  }
+
+  @media screen and (max-width: 768px) {
+    gap: 0.5rem;
+
+    button {
+      padding: 0.25rem 0.5rem;
+    }
+
+    button.signout {
+      span {
+        display: none;
+      }
+    }
+  }
 `

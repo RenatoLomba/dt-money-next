@@ -37,24 +37,26 @@ export const Summary: FC = () => {
 
   return (
     <SummaryContainer>
-      <SummaryCard
-        title="Entradas"
-        icon={<ArrowCircleUp size={32} color="#00b37e" />}
-        value={data?.inputs ?? 0}
-      />
+      <div>
+        <SummaryCard
+          title="Entradas"
+          icon={<ArrowCircleUp size={32} color="#00b37e" />}
+          value={data?.inputs ?? 0}
+        />
 
-      <SummaryCard
-        title="Saídas"
-        icon={<ArrowCircleDown size={32} color="#f75a68" />}
-        value={data?.outputs ?? 0}
-      />
+        <SummaryCard
+          title="Saídas"
+          icon={<ArrowCircleDown size={32} color="#f75a68" />}
+          value={data?.outputs ?? 0}
+        />
 
-      <SummaryCard
-        title="Total"
-        icon={<CurrencyDollar size={32} />}
-        value={(data?.inputs ?? 0) - (data?.outputs ?? 0)}
-        filled
-      />
+        <SummaryCard
+          title="Total"
+          icon={<CurrencyDollar size={32} />}
+          value={(data?.inputs ?? 0) - (data?.outputs ?? 0)}
+          filled
+        />
+      </div>
     </SummaryContainer>
   )
 }

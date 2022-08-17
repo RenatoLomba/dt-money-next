@@ -32,4 +32,10 @@ export const GlobalStyle = createGlobalStyle`
       `${theme.fontWeights.regular} ${theme.fontSizes.md} ${theme.fontFamilies.roboto}`};
     line-height: 1.6;
   }
+
+  @media screen and (max-width: 768px) {
+    html {
+      font-size: 87.5%;
+    }
+  }
 `

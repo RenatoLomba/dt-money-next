@@ -52,7 +52,12 @@ export const Header = () => {
               </Dialog.Portal>
             </Dialog.Root>
 
-            <Button size="sm" onClick={() => signOut()} outlined>
+            <Button
+              className="signout"
+              size="sm"
+              onClick={() => signOut()}
+              outlined
+            >
               <User />
               <span>Sign Out</span>
             </Button>

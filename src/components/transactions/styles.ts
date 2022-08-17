@@ -13,30 +13,102 @@ export const TransactionsTable = styled.table`
   border-spacing: 0 0.5rem;
   margin-top: 1.5rem;
 
-  td {
-    padding: 1.25rem 2rem;
-    background: ${(props) => props.theme.colors['gray-700']};
+  // SMALL SCREEN
+  @media screen and (max-width: 768px) {
+    display: flex;
 
-    &.input {
-      color: ${(props) => props.theme.colors['green-300']};
+    tbody {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      gap: 0.75rem;
     }
 
-    &.output {
-      color: ${(props) => props.theme.colors['red-300']};
-    }
+    tr {
+      display: flex;
+      flex-direction: column;
+      background: ${(props) => props.theme.colors['gray-700']};
+      border-radius: 6px;
+      padding: 1.25rem;
+      position: relative;
 
-    &.output::before {
-      content: '- ';
-    }
+      td {
+        width: fit-content;
 
-    &:first-child {
-      border-top-left-radius: 6px;
-      border-bottom-left-radius: 6px;
-    }
+        &.description {
+          font-size: ${(props) => props.theme.fontSizes.lg};
+        }
 
-    &:last-child {
-      border-top-right-radius: 6px;
-      border-bottom-right-radius: 6px;
+        &.value {
+          font-size: ${(props) => props.theme.fontSizes['2xl']};
+          font-weight: ${(props) => props.theme.fontWeights.bold};
+          margin-bottom: 2.5rem;
+        }
+
+        &.category {
+          color: ${(props) => props.theme.colors['gray-500']};
+          font-size: ${(props) => props.theme.fontSizes.lg};
+          position: absolute;
+          bottom: 1.25rem;
+          left: 1.25rem;
+        }
+
+        &.created-date {
+          color: ${(props) => props.theme.colors['gray-500']};
+          font-size: ${(props) => props.theme.fontSizes.lg};
+          position: absolute;
+          bottom: 1.25rem;
+          right: 1.25rem;
+        }
+
+        &.input {
+          color: ${(props) => props.theme.colors['green-300']};
+        }
+
+        &.output {
+          color: ${(props) => props.theme.colors['red-300']};
+        }
+
+        &.output::before {
+          content: '- ';
+        }
+
+        &:last-child {
+          position: absolute;
+          right: 1.25rem;
+          top: 1.25rem;
+        }
+      }
+    }
+  }
+
+  // LARGE SCREEN
+  @media screen and (min-width: 769px) {
+    td {
+      padding: 1.25rem 2rem;
+      background: ${(props) => props.theme.colors['gray-700']};
+
+      &.input {
+        color: ${(props) => props.theme.colors['green-300']};
+      }
+
+      &.output {
+        color: ${(props) => props.theme.colors['red-300']};
+      }
+
+      &.output::before {
+        content: '- ';
+      }
+
+      &:first-child {
+        border-top-left-radius: 6px;
+        border-bottom-left-radius: 6px;
+      }
+
+      &:last-child {
+        border-top-right-radius: 6px;
+        border-bottom-right-radius: 6px;
+      }
     }
   }
 `
@@ -49,6 +121,15 @@ export const SearchForm = styled.form`
   button {
     padding-right: 2rem;
     padding-left: 2rem;
+
+    @media screen and (max-width: 768px) {
+      padding-right: 1rem;
+      padding-left: 1rem;
+
+      span {
+        display: none;
+      }
+    }
   }
 `
 
